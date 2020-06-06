@@ -1,0 +1,4 @@
+To do :
+  Add lifelines
+  Check compatibility for other systems 
+  Decide money prize and flow of the game
