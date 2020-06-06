@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 //global variables
 char Question[15][1000];
@@ -24,7 +25,7 @@ void PrepareGame(int a){
 
 //function to print a banner
 void PrintBanner(){
-	printf("We present to you!\n");
+	printf("\n     We present to you!\n");
 
  	printf(" __  ___  ______     ______\n") ;
 	printf("|  |/  / |   _  \\   /      |\n");
@@ -35,7 +36,7 @@ void PrintBanner(){
                             
 
 	printf("\nThis game consists of 15 questions.");
-	printf("\nPress any key to begin!");
+	printf("\nPress ENTER key to begin!\n");
 }
 
 //function to print a question by its number
@@ -68,7 +69,7 @@ int main(){
 	stdin = back;
 
 	PrintBanner(); //Print a flashy game banner!
-
+	while (getchar() != '\n');
 	
 	int MoneyEarned = 0;
 	
@@ -77,11 +78,13 @@ int main(){
 		PrintOptions(i);
 		printf("Take you time to think! When ready enter your answer : ");
 		char UserChoice[5];
-		fgets(UserChoice,5,stdin);
+		fgets(UserChoice,1000,stdin);
 		if (!strcasecmp(UserChoice,CorrectChoice[i])){
 			MoneyEarned += 100;
 			printf("Congrats! You have answered correctly! You have won $100\n");
-			printf("\n");
+			printf("You have won $%d so far\n",MoneyEarned);
+			printf("Press ENTER to continue\n");
+			getc(stdin);
 		}
 		else{
 			printf("You have answered incorrectly! You have lost the game!\n");
@@ -89,4 +92,5 @@ int main(){
 		}
 		
 	}
+	
 }
