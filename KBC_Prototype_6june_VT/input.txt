@@ -1,12 +1,98 @@
-What is the capital of India?
-Mumbai
+What is the capital of Chile?
+Santiago
 Delhi
-New York
-Berlin
+Niger
+Buenos Aires
 A
-What is the capital of Italy?
-Bern
-Berlin
-Paris
-Rome
+In which direction Muslims pray?
+North-west
+North-east
+South-east
+South-west
 B
+How many hostels are there in BITS Pilani,Pilani Campus?
+10
+12
+14
+16
+C
+What is the total area of Pilani Campus?
+322 acres
+324 acres
+325 acres
+328 acres
+D
+How many states are there in India?
+28
+29
+27
+26
+A
+Which of these brands mascott is a caricature of a little girl?
+Dominos
+Amul
+Parle G
+KFC
+B
+In 2019 who became the youngest ever member of Lok Sabha?
+Nusrat jahan
+Raksh Khadse
+Chandrani Murmu
+Gajendra singh shekhawat
+C
+When is the International Yoga Divas?
+21 March
+21 April
+21 May
+21 June
+D
+Ghatotkach in Mahabharat was son of whom?
+Bheema
+Arjuna
+Parth
+Nakula
+A
+Who was the person tokeep his foot for the second time on moon?
+Edwin Aldrin
+Neil Armstrong
+Vinayak Tyagi
+Sakaham Mahajan
+B
+What is the symbol of Sodium?
+S
+So
+Na
+Br
+C
+Which colour do we see when our eyes are closed?
+Black
+Vibgyor
+Grey
+Eigengrau
+D
+Where did Priyanka Chopra got married?
+Jodhpur
+Bikaner
+Shiv Ganga
+Pilani
+A
+Where is the largest Cricket stadium situated?
+Melbourne
+Ahmedabad
+Cape town
+Kolkata
+B
+What is the probability that Compres will happen in BITS Pilani?
+12.954948%
+25.46524975%
+50%
+100%
+C
+How many Union Territories are there in India?
+6
+7
+8
+9
+D
+
+
