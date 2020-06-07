@@ -28,7 +28,7 @@ How many states are there in India?
 27
 26
 A
-Which of these brands mascott is a caricature of a little girl?
+Which of these brands mascot is a caricature of a little girl?
 Dominos
 Amul
 Parle G
@@ -56,9 +56,9 @@ Who was the person tokeep his foot for the second time on moon?
 Edwin Aldrin
 Neil Armstrong
 Vinayak Tyagi
-Sakaham Mahajan
+Saksham Mahajan
 B
-What is the symbol of Sodium?
+What is the atomic symbol of Sodium?
 S
 So
 Na
