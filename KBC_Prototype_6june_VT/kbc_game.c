@@ -5,7 +5,7 @@
 
 
 /*	KBC GAME
-	Style Guide : Please name functions in CamelCase (First letter of each word should be capital) just for neatness.
+	Style Guide : Please name functions in PascalCase (First letter of each word should be capital) just for neatness.
 	PLEASE ADD COMMENTS IF YOU MAKE CHANGES.
 	Test this code on your machine and tell if there are compatibility issues.
 	Try to use functions wherever possible and reduce the use of global variables.
