@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <stdlib.h>
-
 
 /*	KBC GAME
 	Style Guide : Please name functions in PascalCase (First letter of each word should be capital) just for neatness.
@@ -21,33 +19,37 @@ char CorrectChoice[16][5];
 
 int FiftyFiftyUsed = 0;
 int FlipTheQuestionUsed = 0;
+int temp;
 
 //function to populate the global variables from the given input file
-void PrepareGame(int a){
+void PrepareGame(int a,FILE *fp){
 	char question[1000];
-	fgets(question,1000,stdin);
+	fgets(question,1000,fp);
 	strcpy(Question[a],question);
 	for(int i=0;i<4;i++){
 		char option[1000];
-		fgets(option,1000,stdin);
+		fgets(option,1000,fp);
 		strcpy(Options[a][i],option);
 	}
 	char correct[5];
-	fgets(correct,5,stdin);
+	fgets(correct,5,fp);
 	strcpy(CorrectChoice[a],correct);
 }
 
 //function to print a banner
 void PrintBanner(){
-	printf("\n     		                                    We present to you!\n");
+	printf("\nWe present to you!\n");
 
- 	printf("		                                 __  ___  ______     ______\n") ;
-	printf("		                                |  |/  / |   _  \\   /      |\n");
-	printf("		                                |  '  /  |  |_)  | |  ,----'\n");
-	printf("		                                |    <   |   _  <  |  |     \n");
-	printf("		                                |  .  \\  |  |_)  | |  `----.\n");
-	printf("		                                |__|\\__\\ |______/   \\______|\n");
-	/*FILE *fp;//For opening and printnig the contents of the file containing Question and their respective Prize Money.
+ 	printf(" __  ___  ______     ______\n") ;
+	printf("|  |/  / |   _  \\   /      |\n");
+	printf("|  '  /  |  |_)  | |  ,----'\n");
+	printf("|    <   |   _  <  |  |     \n");
+	printf("|  .  \\  |  |_)  | |  `----.\n");
+	printf("|__|\\__\\ |______/   \\______|\n");
+
+	printf("\nHere's your chance to be a Crorepati!\n");
+
+	FILE *fp;//For opening and printnig the contents of the file containing Question and their respective Prize Money.
 	fp=fopen("Question_PrizeMoney Scheme.txt","r");
 	char c;
 	c=fgetc(fp);
@@ -57,19 +59,26 @@ void PrintBanner(){
 		c=fgetc(fp);
 	}
 	printf("\n");
-	fclose(fp);*/
-	printf("\n	                                This game consists of 15 questions.\n");
-	printf("\n	                                Press 'l' for using a Life-Line\n");
-	printf("\n                                        You have 2 Life-Lines -Fifty-Fifty and Flip the Question.\n");
-	printf("\n                                        You will have 2 safe points at 5th and 10th question respectively.\n");
-	printf("\n                                        Losing after a safe point will take Prize money back to the last safe point instead of it turning to zero.\n");
-	printf("\n	                                Press ENTER key to begin!\n");            
+	fclose(fp);
+
+	printf("\nThis game consists of 15 questions.\n");
+	printf("\nPress 'l' for using a Life-Line\n");
+	printf("\nYou have 2 Life-Lines -Fifty-Fifty and Flip the Question.\n");
+	printf("\nYou will have 2 safe points at 5th and 10th question respectively.\n");
+	printf("\nLosing after a safe point will take Prize money back to the last safe point instead of it turning to zero.\n");
+	printf("\nPress ENTER key to begin!\n");            
 }
 
 //function to print a question by its number
 void PrintQuestion(int q){
-	printf("\nHere's Question No. %d\n",q+1);
-	printf("%s\n",Question[q]);
+	if (q < 15){
+		printf("\nHere's Question No. %d\n",q+1);
+		printf("%s\n",Question[q]);
+	}
+	else{
+		//printf("\nHere's the FLIPPED Question No. %d\n",q+1);
+		printf("\n%s\n",Question[temp]);
+	}
 }
 
 //function to print options for a given question
@@ -103,6 +112,12 @@ void FlipTheQuestion(int q){
 	PrintOptions(15);
 }
 
+void NestedLifeLine(int q, int temp){
+	if (q == temp)
+		FiftyFifty(q);
+	else
+		FiftyFifty(temp);
+}
 //function that dictates the use of life lines
 void UseLifeLine(int q){
 	if (FiftyFiftyUsed && FlipTheQuestionUsed){
@@ -125,6 +140,7 @@ void UseLifeLine(int q){
 		else if (num == 2){
 			FlipTheQuestion(q);
 			FlipTheQuestionUsed = 1;
+			temp = 15;
 			return;
 		}
 		else if (num ==3){
@@ -144,7 +160,7 @@ void UseLifeLine(int q){
 		printf("Enter a choice : ");
 		scanf("%d%c",&num,&NextChar);
 		if (num == 1){
-			FiftyFifty(q);
+			NestedLifeLine(q,temp);
 			FiftyFiftyUsed = 1;
 			return;
 		}	
@@ -183,7 +199,7 @@ void UseLifeLine(int q){
 	}
 }
 
-//Alternative to strcasecmp function. It is more reliable in my opinion
+//Alternative to strcasecmp function.
 int ChoicesAreSame(char* a, char* b){
 	if ((*a == *b) || abs(*a - *b) == 32)
 		return 1;
@@ -224,21 +240,36 @@ int MoneyCalculator(int MoneyEarned){
 	else
 		return MoneyEarned*2;
 }
+
+int IsValidInput(char* input){
+	if (ChoicesAreSame(input,"A") || ChoicesAreSame(input,"B") || ChoicesAreSame(input,"C") || ChoicesAreSame(input,"D") || ChoicesAreSame(input,"L") || ChoicesAreSame(input,"Q"))
+		return 1;
+	//printf("\nInvalid input!\n");
+	return 0;
+}
+
+void TakeValidInput(char* input){
+	printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
+	fgets(input,5,stdin);
+	while(!IsValidInput(input)){
+		printf("\nInvalid Input!\n\n");
+		printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
+		fgets(input,5,stdin);
+	}
+}
+
 		
 int main(int argc, char *argv[]){
-	//Input the questions from a txt file
-	int old_stdin = dup(1);
+
+	//Reading the game content from the input file
 	FILE *file;
-	file = freopen("input.txt","r",stdin);
-	int TotalQuestions = 15; //set this variable to the number of questions
+	file = fopen("input.txt","r");
+	int TotalQuestions = 15;
 	for(int i=0;i<16;i++){
-		PrepareGame(i);
+		PrepareGame(i,file);
 	}
 	fclose(file);
-	//Redirecting the input to stdin from the input file
-	FILE *back;
-	back = fdopen(old_stdin,"r");
-	*stdin = *back;
+	// ************* Game starts from here*******************
 
 	PrintBanner(); //Print a flashy game banner!
 	while (getchar() != '\n');
@@ -246,28 +277,47 @@ int main(int argc, char *argv[]){
 	int MoneyEarned=5000;
 	
 	for(int i=0;i<TotalQuestions;i++){
+		temp = i;
 		PrintQuestion(i);
 		PrintOptions(i);
 		char* LifeLineCall = "L";
-		printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
+		char* ExitCall = "Q";
 		char UserChoice[5];
-		fgets(UserChoice,1000,stdin);
+		TakeValidInput(UserChoice);
 		while (ChoicesAreSame(LifeLineCall,UserChoice)){
 			UseLifeLine(i);
-			printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
-			fgets(UserChoice,1000,stdin);
+			TakeValidInput(UserChoice);
 		}
 		if (ChoicesAreSame(UserChoice,CorrectChoice[i])){
             MoneyEarned = MoneyCalculator(MoneyEarned);
 			printf("\nCongrats! You have answered correctly!\n");
 			printf("You have won Rs %d so far\n",MoneyEarned);
             Greeting(i); //called only on questions 5 and 10
-			if(i!=14){
+			if(i != 14){
 				printf("Press ENTER to continue\n");
 				getc(stdin);
 			}
 			else
 				printf("\nCongrats! You have won the game!!!!!!!\n");
+		}
+		else if (ChoicesAreSame(UserChoice,ExitCall)){
+			char reply[2];
+			printf("\nAre you sure you want to quit? (y or n)\n");
+			if (!i)
+				printf("If you quit, you'll be going home empty handed!\n");
+			else
+				printf("If you quit, you'll be going home with Rs %d\n",MoneyEarned);
+			//puts(UserChoice);
+			fgets(reply,5,stdin);
+			while(!ChoicesAreSame("y",reply) && !ChoicesAreSame("n",reply)){
+				printf("\nInvalid input!\n");
+				printf("\nAre you sure you want to quit? (y or n)\n");
+				fgets(reply,5,stdin);
+			}	
+			if (ChoicesAreSame("y",reply))
+				break;
+			else
+				i--;
 		}
 		else{
 			printf("\nYou have answered incorrectly! You have lost the game!\n");

@@ -1,3 +1,4 @@
 To do :
-	Check Compatibilty
-	Debug the code
+	Add comments to the code
+	Although it is now quite bulletproof, try and find holes
+	Check compatibilty on your systems
