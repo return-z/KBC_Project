@@ -7,9 +7,7 @@
 	PLEASE ADD COMMENTS IF YOU MAKE CHANGES.
 	Test this code on your machine and tell if there are compatibility issues.
 	Try to use functions wherever possible and reduce the use of global variables.
-	Decide a proper monetary structure and implement in this code.
-	Debugging of the code if left.
-	Chances are that it works ONLY on GCC.
+	Works on all OS'es I could work on!
 */
 
 //global variables
@@ -48,8 +46,9 @@ void PrintBanner(){
 	printf("|__|\\__\\ |______/   \\______|\n");
 
 	printf("\nHere's your chance to be a Crorepati!\n");
-
-	FILE *fp;//For opening and printnig the contents of the file containing Question and their respective Prize Money.
+	
+	//For opening and printnig the contents of the file containing Question and their respective Prize Money.
+	FILE *fp;
 	fp=fopen("Question_PrizeMoney Scheme.txt","r");
 	char c;
 	c=fgetc(fp);
@@ -244,7 +243,6 @@ int MoneyCalculator(int MoneyEarned){
 int IsValidInput(char* input){
 	if (ChoicesAreSame(input,"A") || ChoicesAreSame(input,"B") || ChoicesAreSame(input,"C") || ChoicesAreSame(input,"D") || ChoicesAreSame(input,"L") || ChoicesAreSame(input,"Q"))
 		return 1;
-	//printf("\nInvalid input!\n");
 	return 0;
 }
 
@@ -269,7 +267,8 @@ int main(int argc, char *argv[]){
 		PrepareGame(i,file);
 	}
 	fclose(file);
-	// ************* Game starts from here*******************
+	
+	/* ************* Game starts from here******************* */
 
 	PrintBanner(); //Print a flashy game banner!
 	while (getchar() != '\n');
@@ -277,22 +276,30 @@ int main(int argc, char *argv[]){
 	int MoneyEarned=5000;
 	
 	for(int i=0;i<TotalQuestions;i++){
+		
 		temp = i;
 		PrintQuestion(i);
 		PrintOptions(i);
+		
 		char* LifeLineCall = "L";
 		char* ExitCall = "Q";
 		char UserChoice[5];
+		
+		//Take VALID input from the user
 		TakeValidInput(UserChoice);
+		
+		//user wants to opt for a lifeline
 		while (ChoicesAreSame(LifeLineCall,UserChoice)){
 			UseLifeLine(i);
 			TakeValidInput(UserChoice);
 		}
+		
+		//one of the options are entered by the user
 		if (ChoicesAreSame(UserChoice,CorrectChoice[i])){
-            MoneyEarned = MoneyCalculator(MoneyEarned);
+           		MoneyEarned = MoneyCalculator(MoneyEarned);
 			printf("\nCongrats! You have answered correctly!\n");
 			printf("You have won Rs %d so far\n",MoneyEarned);
-            Greeting(i); //called only on questions 5 and 10
+            		Greeting(i); //called only on questions 5 and 10
 			if(i != 14){
 				printf("Press ENTER to continue\n");
 				getc(stdin);
@@ -300,6 +307,8 @@ int main(int argc, char *argv[]){
 			else
 				printf("\nCongrats! You have won the game!!!!!!!\n");
 		}
+		
+		//user wishes to exit the game
 		else if (ChoicesAreSame(UserChoice,ExitCall)){
 			char reply[2];
 			printf("\nAre you sure you want to quit? (y or n)\n");
@@ -319,10 +328,12 @@ int main(int argc, char *argv[]){
 			else
 				i--;
 		}
+		
+		//user entered the wrong answer
 		else{
 			printf("\nYou have answered incorrectly! You have lost the game!\n");
 			SafePoints(i);
-            printf("\n");
+            		printf("\n");
 			break;
 		}
 		
