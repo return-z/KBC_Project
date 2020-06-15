@@ -120,7 +120,7 @@ void NestedLifeLine(int q, int temp){
 //function that dictates the use of life lines
 void UseLifeLine(int q){
 	if (FiftyFiftyUsed && FlipTheQuestionUsed){
-		printf("No Lifelines are available!\n");
+		printf("\nNo Lifelines are available!\n\n");
 		return;
 	}
 	printf("\nFollowing Lifelines are available:\n");
@@ -164,14 +164,14 @@ void UseLifeLine(int q){
 			return;
 		}	
 		else if (num == 2){
-			PrintQuestion(q);
-			PrintOptions(q);
+			PrintQuestion(temp);
+			PrintOptions(temp);
 			return;
 		}
 		else{
 			printf("Invalid choice!\n");
-			PrintQuestion(q);
-			PrintOptions(q);
+			PrintQuestion(temp);
+			PrintOptions(temp);
 			return;
 		}
 	}
@@ -295,11 +295,11 @@ int main(int argc, char *argv[]){
 		}
 		
 		//one of the options are entered by the user
-		if (ChoicesAreSame(UserChoice,CorrectChoice[i])){
-           		MoneyEarned = MoneyCalculator(MoneyEarned);
+		if (ChoicesAreSame(UserChoice,CorrectChoice[temp])){
+           	MoneyEarned = MoneyCalculator(MoneyEarned);
 			printf("\nCongrats! You have answered correctly!\n");
 			printf("You have won Rs %d so far\n",MoneyEarned);
-            		Greeting(i); //called only on questions 5 and 10
+            Greeting(i); //called only on questions 5 and 10
 			if(i != 14){
 				printf("Press ENTER to continue\n");
 				getc(stdin);
@@ -334,6 +334,7 @@ int main(int argc, char *argv[]){
 			printf("\nYou have answered incorrectly! You have lost the game!\n");
 			SafePoints(i);
             		printf("\n");
+            system("pause");		
 			break;
 		}
 		
