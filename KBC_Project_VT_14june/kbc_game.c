@@ -130,7 +130,6 @@ void UseLifeLine(int q){
 		printf("1. FIFTY-FIFTY\n2. FLIP THE QUESTION\n3. Go back! I can solve this!\n");
 		printf("Enter a choice : ");
 		scanf("%d%c",&num,&NextChar);
-		printf("%d\n",num);
 		if (num == 1){
 			FiftyFifty(q);
 			FiftyFiftyUsed = 1;
