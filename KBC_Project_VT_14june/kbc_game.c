@@ -214,6 +214,7 @@ void SafePoints(int q){
 		printf("\nSorry! You have won Rs 0.\n");
 }
 
+//Function disclosing more about safepoints
 void Greeting(int q){
     if (q != 4 && q != 9)
         return;
@@ -226,6 +227,7 @@ void Greeting(int q){
     printf("\n");
 }
 
+//Function calculating the money earned
 int MoneyCalculator(int MoneyEarned){
 	if(MoneyEarned==640000)
 		return 1250000;
@@ -239,12 +241,14 @@ int MoneyCalculator(int MoneyEarned){
 		return MoneyEarned*2;
 }
 
+//To check if the choice is correct
 int IsValidInput(char* input){
 	if (ChoicesAreSame(input,"A") || ChoicesAreSame(input,"B") || ChoicesAreSame(input,"C") || ChoicesAreSame(input,"D") || ChoicesAreSame(input,"L") || ChoicesAreSame(input,"Q"))
 		return 1;
 	return 0;
 }
 
+//Function to reassure the player
 void TakeValidInput(char* input){
 	printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
 	fgets(input,5,stdin);
@@ -258,7 +262,7 @@ void TakeValidInput(char* input){
 		
 int main(int argc, char *argv[]){
 
-	//Reading the game content from the input file
+	//Reading the game content from the input filechoice
 	FILE *file;
 	file = fopen("input.txt","r");
 	int TotalQuestions = 15;
