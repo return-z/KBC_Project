@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define INPUT_BUFFER 50 //maximum input characters the user can give. For larger inputs program will crash
+#define INPUT_BUFFER 1000 //maximum input characters the user can give. For larger inputs program will crash
 
 /*	KBC GAME
 	Style Guide : Please name functions in PascalCase (First letter of each word should be capital) just for neatness.
@@ -13,27 +13,25 @@
 */
 
 //global variables
-char Question[16][1000];
-char Options[16][4][1000];
-char CorrectChoice[16][5];
-
 int FiftyFiftyUsed = 0;
 int FlipTheQuestionUsed = 0;
 int CurrentQuestion;
 
-//function to populate the global variables from the given input file
+//Basic unit of the game is an Object. An Object consists of the question,options and correct choice for the question.
+struct Object{
+	char Question[INPUT_BUFFER];
+	char Options[4][INPUT_BUFFER];
+	char CorrectChoice[INPUT_BUFFER];
+}Object[16];
+
+//*********************FUNCTIONS FOR PREPARING THE GAME ENVIORNMENT****************//
+
+//function to populate the structure
 void PrepareGame(int a,FILE *fp){
-	char question[1000];
-	fgets(question,1000,fp);
-	strcpy(Question[a],question);
-	for(int i = 0;i < 4; i++){
-		char option[1000];
-		fgets(option,1000,fp);
-		strcpy(Options[a][i],option);
-	}
-	char correct[5];
-	fgets(correct,5,fp);
-	strcpy(CorrectChoice[a],correct);
+	fgets(Object[a].Question,INPUT_BUFFER,fp);
+	for(int i=0;i<4;i++)
+		fgets(Object[a].Options[i],INPUT_BUFFER,fp);
+	fgets(Object[a].CorrectChoice,INPUT_BUFFER,fp);
 }
 
 //function to print a banner
@@ -70,14 +68,16 @@ void PrintBanner(){
 	printf("\nPress ENTER key to begin!\n");            
 }
 
+// *******************GENERAL USE FUNCTIONS (FOR PRINTING QUESTIONS AND OPTIONS)****************//
+
 //function to print a question by its number
 void PrintQuestion(int q){
 	if (q < 15){
 		printf("\nHere's Question No. %d\n",q+1);
-		printf("%s\n",Question[q]);
+		printf("%s\n",Object[q].Question);
 	}
 	else{
-		printf("\n%s\n",Question[CurrentQuestion]);
+		printf("\n%s\n",Object[q].Question);
 	}
 }
 
@@ -85,9 +85,11 @@ void PrintQuestion(int q){
 void PrintOptions(int q){
 	char OptionValue = 'A';
 	for(int j=0;j<4;j++){
-		printf("%c. %s\n",OptionValue++,Options[q][j]);
+		printf("%c. %s\n",OptionValue++,Object[q].Options[j]);
 	}
 }
+
+//********************FUNCTIONS DEFINED FOR LIFELINES***************************//
 
 //function for the life line 50-50
 void FiftyFifty(int q){
@@ -95,12 +97,12 @@ void FiftyFifty(int q){
     char OptionValue = 'A';
 	int IncorrectOptionPrinted = 0;
 	for(int j=0;j<4;j++){
-		if (OptionValue != *CorrectChoice[q] && !IncorrectOptionPrinted){
-			printf("%c. %s\n",OptionValue,Options[q][j]);
+		if (OptionValue != *Object[q].CorrectChoice && !IncorrectOptionPrinted){
+			printf("%c. %s\n",OptionValue,Object[q].Options[j]);
 			IncorrectOptionPrinted = 1;
 		}
-		if (OptionValue == *CorrectChoice[q])
-			printf("%c. %s\n",OptionValue,Options[q][j]);  
+		if (OptionValue == *Object[q].CorrectChoice)
+			printf("%c. %s\n",OptionValue,Object[q].Options[j]);  
         OptionValue++;
 	}
 }
@@ -108,11 +110,19 @@ void FiftyFifty(int q){
 //function for the lifeline flip the question
 void FlipTheQuestion(int q){
 	printf("\nHere's the FLIPPED Question No. %d\n",q+1);
-	printf("%s\n",Question[15]);
+	printf("%s\n",Object[15].Question);
 	PrintOptions(15);
 }
 
-//function that dictates the use of life lines
+//*************************FUNCTIONS TO ALLOW VALID INPUT ONLY************************//
+
+//Alternative to strcasecmp function for characters.
+int ChoicesAreSame(char* a, char* b){
+	if ((*a == *b) || abs(*a - *b) == 32)
+		return 1;
+	return 0;
+}
+
 int ValidLifeLineInput(){
 	char* input; //Take user's input as string and use the first letter to derefernce choice
 	int InvalidInput = 4; //Handles bad input
@@ -122,7 +132,27 @@ int ValidLifeLineInput(){
 	return InvalidInput;
 }
 
+//To check if the choice is correct
+int IsValidInput(char* input){
+	if (strlen(input) <= 2){
+		if (ChoicesAreSame(input,"A") || ChoicesAreSame(input,"B") || ChoicesAreSame(input,"C") || ChoicesAreSame(input,"D") || ChoicesAreSame(input,"L") || ChoicesAreSame(input,"Q"))
+			return 1;
+	}
+	return 0;
+}
 
+//Function to reassure the player
+void TakeValidInput(char* input){
+	printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
+	fgets(input,INPUT_BUFFER,stdin);
+	while(!IsValidInput(input)){
+		printf("\nInvalid Input!\n\n");
+		printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
+		fgets(input,INPUT_BUFFER,stdin);
+	}
+}
+
+//FUNCTION DESCRIBING THE USE OF LIFELINES
 void UseLifeLine(int q){
 	if (FiftyFiftyUsed && FlipTheQuestionUsed){
 		printf("\nNo Lifelines are available!\n\n");
@@ -209,12 +239,7 @@ void UseLifeLine(int q){
 	}
 }
 
-//Alternative to strcasecmp function for characters.
-int ChoicesAreSame(char* a, char* b){
-	if ((*a == *b) || abs(*a - *b) == 32)
-		return 1;
-	return 0;
-}
+//*******************************MISC HELPER FUNCTIONS*************************//
 
 //Function that defines safepoints
 void SafePoints(int q){
@@ -252,27 +277,6 @@ int MoneyCalculator(int MoneyEarned){
 	else
 		return MoneyEarned*2;
 }
-
-//To check if the choice is correct
-int IsValidInput(char* input){
-	if (strlen(input) <= 2){
-		if (ChoicesAreSame(input,"A") || ChoicesAreSame(input,"B") || ChoicesAreSame(input,"C") || ChoicesAreSame(input,"D") || ChoicesAreSame(input,"L") || ChoicesAreSame(input,"Q"))
-			return 1;
-	}
-	return 0;
-}
-
-//Function to reassure the player
-void TakeValidInput(char* input){
-	printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
-	fgets(input,INPUT_BUFFER,stdin);
-	while(!IsValidInput(input)){
-		printf("\nInvalid Input!\n\n");
-		printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
-		fgets(input,INPUT_BUFFER,stdin);
-	}
-}
-
 		
 int main(int argc, char *argv[]){
 
@@ -290,7 +294,7 @@ int main(int argc, char *argv[]){
 	PrintBanner(); //Print a flashy game banner!
 	while (getchar() != '\n' && getchar() != EOF);
 	
-	int MoneyEarned=5000;
+	int MoneyEarned = 5000;
 	
 	for(int i = 0; i < TotalQuestions; i++){
 		
@@ -313,11 +317,11 @@ int main(int argc, char *argv[]){
 		}
 		
 		//one of the options are entered by the user
-		if (ChoicesAreSame(UserChoice,CorrectChoice[CurrentQuestion])){
+		if (ChoicesAreSame(UserChoice,Object[CurrentQuestion].CorrectChoice)){
            	MoneyEarned = MoneyCalculator(MoneyEarned);
 			printf("\nCongrats! You have answered correctly!\n");
 			printf("You have won Rs %d so far\n",MoneyEarned);
-            Greeting(CurrentQuestion); //called only on questions 5 and 10
+            Greeting(i); //called only on questions 5 and 10
 			if(i != 14){
 				printf("Press ENTER to continue\n");
 				getc(stdin);
@@ -352,7 +356,7 @@ int main(int argc, char *argv[]){
 			printf("\nYou have answered incorrectly! You have lost the game!\n");
 			SafePoints(i);
             printf("\n");
-            system("pause"); //UNCOMMENT THIS LINE IF YOU'RE USING LINUX
+            system("pause"); //COMMENT THIS LINE IF YOU'RE USING LINUX
 			break;
 		}
 		
