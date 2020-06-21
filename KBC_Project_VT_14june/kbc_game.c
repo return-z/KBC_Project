@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define INPUT_BUFFER 50 //maximum input characters the user can give. For larger inputs program will crash
+
 /*	KBC GAME
 	Style Guide : Please name functions in PascalCase (First letter of each word should be capital) just for neatness.
 	PLEASE ADD COMMENTS IF YOU MAKE CHANGES.
@@ -17,14 +19,14 @@ char CorrectChoice[16][5];
 
 int FiftyFiftyUsed = 0;
 int FlipTheQuestionUsed = 0;
-int temp;
+int CurrentQuestion;
 
 //function to populate the global variables from the given input file
 void PrepareGame(int a,FILE *fp){
 	char question[1000];
 	fgets(question,1000,fp);
 	strcpy(Question[a],question);
-	for(int i=0;i<4;i++){
+	for(int i = 0;i < 4; i++){
 		char option[1000];
 		fgets(option,1000,fp);
 		strcpy(Options[a][i],option);
@@ -49,13 +51,13 @@ void PrintBanner(){
 	
 	//For opening and printnig the contents of the file containing Question and their respective Prize Money.
 	FILE *fp;
-	fp=fopen("Question_PrizeMoney Scheme.txt","r");
+	fp = fopen("Question_PrizeMoney Scheme.txt","r");
 	char c;
-	c=fgetc(fp);
+	c = fgetc(fp);
 	printf("\n");
-	while(c!=EOF){
+	while(c != EOF){
 		printf("%c",c);
-		c=fgetc(fp);
+		c = fgetc(fp);
 	}
 	printf("\n");
 	fclose(fp);
@@ -75,8 +77,7 @@ void PrintQuestion(int q){
 		printf("%s\n",Question[q]);
 	}
 	else{
-		//printf("\nHere's the FLIPPED Question No. %d\n",q+1);
-		printf("\n%s\n",Question[temp]);
+		printf("\n%s\n",Question[CurrentQuestion]);
 	}
 }
 
@@ -111,26 +112,32 @@ void FlipTheQuestion(int q){
 	PrintOptions(15);
 }
 
-void NestedLifeLine(int q, int temp){
-	if (q == temp)
-		FiftyFifty(q);
-	else
-		FiftyFifty(temp);
-}
 //function that dictates the use of life lines
+int ValidLifeLineInput(){
+	char* input; //Take user's input as string and use the first letter to derefernce choice
+	int InvalidInput = 4; //Handles bad input
+	fgets(input,INPUT_BUFFER,stdin);
+	if (strlen(input) < 3)
+		return *input - '0'; //Derefernce the pointer and subtract the '0' char to get integer value
+	return InvalidInput;
+}
+
+
 void UseLifeLine(int q){
 	if (FiftyFiftyUsed && FlipTheQuestionUsed){
 		printf("\nNo Lifelines are available!\n\n");
 		return;
 	}
 	printf("\nFollowing Lifelines are available:\n");
-	int num;
-	char NextChar = '\n';
+
+	int num; //Takes the user's input as a character
+
 	if (!FiftyFiftyUsed && !FlipTheQuestionUsed){
 		printf("1. FIFTY-FIFTY\n2. FLIP THE QUESTION\n3. Go back! I can solve this!\n");
 		printf("Enter a choice : ");
-		scanf("%d%c",&num,&NextChar);
-		printf("%d\n",num);
+
+		num = ValidLifeLineInput();
+
 		if (num == 1){
 			FiftyFifty(q);
 			FiftyFiftyUsed = 1;
@@ -139,7 +146,7 @@ void UseLifeLine(int q){
 		else if (num == 2){
 			FlipTheQuestion(q);
 			FlipTheQuestionUsed = 1;
-			temp = 15;
+			CurrentQuestion = 15;
 			return;
 		}
 		else if (num ==3){
@@ -157,28 +164,32 @@ void UseLifeLine(int q){
 	if (!FiftyFiftyUsed){
 		printf("1. FIFTY-FIFTY\n2. Go back! I can solve this!\n");
 		printf("Enter a choice : ");
-		scanf("%d%c",&num,&NextChar);
+
+		num = ValidLifeLineInput();
+
 		if (num == 1){
-			NestedLifeLine(q,temp);
+			FiftyFifty(q);
 			FiftyFiftyUsed = 1;
 			return;
 		}	
 		else if (num == 2){
-			PrintQuestion(temp);
-			PrintOptions(temp);
+			PrintQuestion(q);
+			PrintOptions(q);
 			return;
 		}
 		else{
 			printf("Invalid choice!\n");
-			PrintQuestion(temp);
-			PrintOptions(temp);
+			PrintQuestion(q);
+			PrintOptions(q);
 			return;
 		}
 	}
 	if (!FlipTheQuestionUsed){
 		printf("1. FLIP THE QUESTION\n2. Go back! I can solve this!\n");
 		printf("Enter a choice : ");
-		scanf("%d%c",&num,&NextChar);
+
+		num = ValidLifeLineInput();
+
 		if (num == 1){
 			FlipTheQuestion(q);
 			FlipTheQuestionUsed = 1;
@@ -198,7 +209,7 @@ void UseLifeLine(int q){
 	}
 }
 
-//Alternative to strcasecmp function.
+//Alternative to strcasecmp function for characters.
 int ChoicesAreSame(char* a, char* b){
 	if ((*a == *b) || abs(*a - *b) == 32)
 		return 1;
@@ -241,18 +252,20 @@ int MoneyCalculator(int MoneyEarned){
 }
 
 int IsValidInput(char* input){
-	if (ChoicesAreSame(input,"A") || ChoicesAreSame(input,"B") || ChoicesAreSame(input,"C") || ChoicesAreSame(input,"D") || ChoicesAreSame(input,"L") || ChoicesAreSame(input,"Q"))
-		return 1;
+	if (strlen(input) <= 2){
+		if (ChoicesAreSame(input,"A") || ChoicesAreSame(input,"B") || ChoicesAreSame(input,"C") || ChoicesAreSame(input,"D") || ChoicesAreSame(input,"L") || ChoicesAreSame(input,"Q"))
+			return 1;
+	}
 	return 0;
 }
 
 void TakeValidInput(char* input){
 	printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
-	fgets(input,5,stdin);
+	fgets(input,INPUT_BUFFER,stdin);
 	while(!IsValidInput(input)){
 		printf("\nInvalid Input!\n\n");
 		printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
-		fgets(input,5,stdin);
+		fgets(input,INPUT_BUFFER,stdin);
 	}
 }
 
@@ -263,7 +276,7 @@ int main(int argc, char *argv[]){
 	FILE *file;
 	file = fopen("input.txt","r");
 	int TotalQuestions = 15;
-	for(int i=0;i<16;i++){
+	for(int i = 0; i < 16; i++){
 		PrepareGame(i,file);
 	}
 	fclose(file);
@@ -271,35 +284,36 @@ int main(int argc, char *argv[]){
 	/* ************* Game starts from here******************* */
 
 	PrintBanner(); //Print a flashy game banner!
-	while (getchar() != '\n');
+	while (getchar() != '\n' && getchar() != EOF);
 	
 	int MoneyEarned=5000;
 	
-	for(int i=0;i<TotalQuestions;i++){
+	for(int i = 0; i < TotalQuestions; i++){
 		
-		temp = i;
-		PrintQuestion(i);
-		PrintOptions(i);
+		CurrentQuestion = i; //Why is this done?
+
+		PrintQuestion(CurrentQuestion);
+		PrintOptions(CurrentQuestion);
 		
 		char* LifeLineCall = "L";
 		char* ExitCall = "Q";
-		char UserChoice[5];
+		char UserChoice[INPUT_BUFFER];
 		
 		//Take VALID input from the user
 		TakeValidInput(UserChoice);
 		
 		//user wants to opt for a lifeline
 		while (ChoicesAreSame(LifeLineCall,UserChoice)){
-			UseLifeLine(i);
+			UseLifeLine(CurrentQuestion);
 			TakeValidInput(UserChoice);
 		}
 		
 		//one of the options are entered by the user
-		if (ChoicesAreSame(UserChoice,CorrectChoice[temp])){
+		if (ChoicesAreSame(UserChoice,CorrectChoice[CurrentQuestion])){
            	MoneyEarned = MoneyCalculator(MoneyEarned);
 			printf("\nCongrats! You have answered correctly!\n");
 			printf("You have won Rs %d so far\n",MoneyEarned);
-            Greeting(i); //called only on questions 5 and 10
+            Greeting(CurrentQuestion); //called only on questions 5 and 10
 			if(i != 14){
 				printf("Press ENTER to continue\n");
 				getc(stdin);
@@ -310,18 +324,18 @@ int main(int argc, char *argv[]){
 		
 		//user wishes to exit the game
 		else if (ChoicesAreSame(UserChoice,ExitCall)){
-			char reply[2];
+			char reply[INPUT_BUFFER];
 			printf("\nAre you sure you want to quit? (y or n)\n");
 			if (!i)
 				printf("If you quit, you'll be going home empty handed!\n");
 			else
 				printf("If you quit, you'll be going home with Rs %d\n",MoneyEarned);
 			//puts(UserChoice);
-			fgets(reply,5,stdin);
-			while(!ChoicesAreSame("y",reply) && !ChoicesAreSame("n",reply)){
+			fgets(reply,INPUT_BUFFER,stdin);
+			while(!ChoicesAreSame("y",reply) && !ChoicesAreSame("n",reply) && strlen(reply) > 2){
 				printf("\nInvalid input!\n");
 				printf("\nAre you sure you want to quit? (y or n)\n");
-				fgets(reply,5,stdin);
+				fgets(reply,INPUT_BUFFER,stdin);
 			}	
 			if (ChoicesAreSame("y",reply))
 				break;
@@ -333,8 +347,8 @@ int main(int argc, char *argv[]){
 		else{
 			printf("\nYou have answered incorrectly! You have lost the game!\n");
 			SafePoints(i);
-            		printf("\n");
-            system("pause");		
+            printf("\n");
+            system("pause"); //UNCOMMENT THIS LINE IF YOU'RE USING LINUX
 			break;
 		}
 		
