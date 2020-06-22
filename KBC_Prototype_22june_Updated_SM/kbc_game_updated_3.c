@@ -52,9 +52,7 @@ void PrintBanner(){
 		c = fgetc(fp);
 	}
 	printf("\n");
-	fclose(fp);
-
-	//Initializing the Lifeline attributes by leveraging the one-time, initial calling of this function            
+	fclose(fp);       
 }
 
 // *******************GENERAL USE FUNCTIONS (FOR PRINTING QUESTIONS AND OPTIONS)****************//
