@@ -1,0 +1,5 @@
+Check any commenting if left
+Tried debugging. In my opinion seems fine.
+Suggest any changes.
+Discuss the code on VC asap.
+Lets finalize the project latest by Friday.
