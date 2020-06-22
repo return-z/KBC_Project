@@ -12,9 +12,7 @@
 	Works on all OS'es I could work on!
 */
 
-//global variables
-int FiftyFiftyUsed = 0;
-int FlipTheQuestionUsed = 0;
+//global variable
 int CurrentQuestion;
 
 //Basic unit of the game is an Object. An Object consists of the question,options and correct choice for the question.
@@ -23,6 +21,14 @@ struct Object{
 	char Options[4][INPUT_BUFFER];
 	char CorrectChoice[INPUT_BUFFER];
 }Object[16];
+
+//Lifeline structure with its attributes : 'Used' defines the state of the lifeline
+//'token' is assigned while printing the available options. Lifeline[0] -> 50-50 & Lifeline[1] -> FlipTheQuestion
+struct Lifeline{
+	char Name[INPUT_BUFFER];
+	int Used;
+	int token;
+}Lifeline[2];
 
 //*********************FUNCTIONS FOR PREPARING THE GAME ENVIORNMENT****************//
 
@@ -36,20 +42,8 @@ void PrepareGame(int a,FILE *fp){
 
 //function to print a banner
 void PrintBanner(){
-	printf("\nWe present to you!\n");
-
- 	printf(" __  ___  ______     ______\n") ;
-	printf("|  |/  / |   _  \\   /      |\n");
-	printf("|  '  /  |  |_)  | |  ,----'\n");
-	printf("|    <   |   _  <  |  |     \n");
-	printf("|  .  \\  |  |_)  | |  `----.\n");
-	printf("|__|\\__\\ |______/   \\______|\n");
-
-	printf("\nHere's your chance to be a Crorepati!\n");
-	
-	//For opening and printnig the contents of the file containing Question and their respective Prize Money.
 	FILE *fp;
-	fp = fopen("Question_PrizeMoney Scheme.txt","r");
+	fp = fopen("intro.txt","r");
 	char c;
 	c = fgetc(fp);
 	printf("\n");
@@ -58,7 +52,9 @@ void PrintBanner(){
 		c = fgetc(fp);
 	}
 	printf("\n");
-	fclose(fp);            
+	fclose(fp);
+
+	//Initializing the Lifeline attributes by leveraging the one-time, initial calling of this function            
 }
 
 // *******************GENERAL USE FUNCTIONS (FOR PRINTING QUESTIONS AND OPTIONS)****************//
@@ -84,7 +80,7 @@ void PrintOptions(int q){
 
 //********************FUNCTIONS DEFINED FOR LIFELINES***************************//
 
-//function for the life line 50-50
+//function for the life line 50-50. Works by printing the correct and one incorrect option.
 void FiftyFifty(int q){
 	PrintQuestion(q);
     char OptionValue = 'A';
@@ -102,6 +98,7 @@ void FiftyFifty(int q){
 
 //function for the lifeline flip the question
 void FlipTheQuestion(int q){
+	CurrentQuestion = 15;
 	printf("\nHere's the FLIPPED Question No. %d\n",q+1);
 	printf("%s\n",Object[15].Question);
 	PrintOptions(15);
@@ -118,7 +115,7 @@ int ChoicesAreSame(char* a, char* b){
 
 int ValidLifeLineInput(){
 	char* input; //Take user's input as string and use the first letter to derefernce choice
-	int InvalidInput = 4; //Handles bad input
+	int InvalidInput = -1; //Handles bad input
 	fgets(input,INPUT_BUFFER,stdin);
 	if (strlen(input) < 3)
 		return *input - '0'; //Derefernce the pointer and subtract the '0' char to get integer value
@@ -134,7 +131,7 @@ int IsValidInput(char* input){
 	return 0;
 }
 
-//Function to reassure the player
+//To prompt the user for inputting a valid choice
 void TakeValidInput(char* input){
 	printf("Take you time to think! When ready enter your answer or use a Life Line! or Quit the game: ");
 	fgets(input,INPUT_BUFFER,stdin);
@@ -147,87 +144,46 @@ void TakeValidInput(char* input){
 
 //FUNCTION DESCRIBING THE USE OF LIFELINES
 void UseLifeLine(int q){
-	if (FiftyFiftyUsed && FlipTheQuestionUsed){
+	if (Lifeline[0].Used && Lifeline[1].Used){
 		printf("\nNo Lifelines are available!\n\n");
 		return;
 	}
+	Lifeline[0].token = Lifeline[1].token = 0; //Reset all token values to 0
 	printf("\nFollowing Lifelines are available:\n");
-
-	int num; //Takes the user's input as a character
-
-	if (!FiftyFiftyUsed && !FlipTheQuestionUsed){
-		printf("1. FIFTY-FIFTY\n2. FLIP THE QUESTION\n3. Go back! I can solve this!\n");
-		printf("Enter a choice : ");
-
-		num = ValidLifeLineInput();
-
-		if (num == 1){
-			FiftyFifty(q);
-			FiftyFiftyUsed = 1;
-			return;
-		}
-		else if (num == 2){
-			FlipTheQuestion(q);
-			FlipTheQuestionUsed = 1;
-			CurrentQuestion = 15;
-			return;
-		}
-		else if (num ==3){
-			PrintQuestion(q);
-			PrintOptions(q);
-			return;
-		}
-		else{
-			printf("Invalid choice!\n");
-			PrintQuestion(q);
-			PrintOptions(q);
-			return;
+	int id = 1; //provide an id to the lifelines 
+	for(int i=0;i<2;i++){
+		if (!Lifeline[i].Used){
+			Lifeline[i].token = id;
+			printf("%d. %s\n", id++, Lifeline[i].Name);
 		}
 	}
-	if (!FiftyFiftyUsed){
-		printf("1. FIFTY-FIFTY\n2. Go back! I can solve this!\n");
-		printf("Enter a choice : ");
-
+	printf("%d. Go back! I can solve this!\n",id);
+	printf("Enter a choice : ");
+	int num = ValidLifeLineInput();
+	//prompt user until valid input is entered
+	while (num < 0 || num > id){
+		printf("\nInvalid Choice!\n");
+		printf("\nEnter a choice : ");
 		num = ValidLifeLineInput();
-
-		if (num == 1){
-			FiftyFifty(q);
-			FiftyFiftyUsed = 1;
-			return;
-		}	
-		else if (num == 2){
-			PrintQuestion(q);
-			PrintOptions(q);
-			return;
-		}
-		else{
-			printf("Invalid choice!\n");
-			PrintQuestion(q);
-			PrintOptions(q);
-			return;
-		}
 	}
-	if (!FlipTheQuestionUsed){
-		printf("1. FLIP THE QUESTION\n2. Go back! I can solve this!\n");
-		printf("Enter a choice : ");
-
-		num = ValidLifeLineInput();
-
-		if (num == 1){
-			FlipTheQuestion(q);
-			FlipTheQuestionUsed = 1;
-			return;
-		}	
-		else if (num == 2){
-			PrintQuestion(q);
-			PrintOptions(q);
-			return;
-		}
-		else{
-			printf("Invalid choice!\n");
-			PrintQuestion(q);
-			PrintOptions(q);
-			return;
+	//handles the Go back case
+	if (num == id){
+		PrintQuestion(q);
+		PrintOptions(q);
+		return;
+	}
+	//handles the lifeline usage
+	for(int i=0;i<2;i++){
+		if (num == Lifeline[i].token){
+			Lifeline[i].Used = 1;
+			if (i == 0){
+				FiftyFifty(q);
+				return;
+			}
+			else{
+				FlipTheQuestion(q);
+				return;
+			}
 		}
 	}
 }
@@ -281,7 +237,11 @@ int main(int argc, char *argv[]){
 		PrepareGame(i,file);
 	}
 	fclose(file);
-	
+	//initializing lifelines by assigning attributes
+	strcpy(Lifeline[0].Name,"Fifty-Fifty");
+	strcpy(Lifeline[1].Name,"Flip the Question");
+	Lifeline[0].Used = Lifeline[1].Used = 0;
+
 	/* ************* Game starts from here******************* */
 
 	PrintBanner(); //Print a flashy game banner!

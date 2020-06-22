@@ -1,0 +1,44 @@
+
+We present to you!
+
+##    ## ########   ######  
+##   ##  ##     ## ##    ## 
+##  ##   ##     ## ##       
+#####    ########  ##       
+##  ##   ##     ## ##       
+##   ##  ##     ## ##    ## 
+##    ## ########   ######  
+
+Here's your chance to be a Crorepati!
+
+
+This game consits of 15 Questions.
+
+Question Number            Prize Money
+1                          Rs 10000
+2                          Rs 20000
+3                          Rs 40000
+4                          Rs 80000
+5                          Rs 160000
+6                          Rs 320000
+7                          Rs 640000
+8                          Rs 1250000
+9                          Rs 2500000
+10                         Rs 5000000
+11                         Rs 10000000
+12                         Rs 20000000
+13                         Rs 30000000
+14                         Rs 50000000
+15                         Rs 70000000
+
+Press 'l' to use a lifeline.
+
+=> You have two lifelines -- Fifty-Fifty and Flip the Question
+
+=> You can quit after any question if you wish to by pressing 'q'
+
+=> You will have two safe points for this game at Fifth and Tenth   question respectively.
+
+=> Losing after a safe point will take the prize money back to the last safepoint instead of it turning to zero.
+
+=> Press ENTER to start the game whenever you are ready!!!
