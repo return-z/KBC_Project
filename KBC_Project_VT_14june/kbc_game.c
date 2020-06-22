@@ -77,7 +77,7 @@ void PrintQuestion(int q){
 		printf("%s\n",Object[q].Question);
 	}
 	else{
-		printf("\n%s\n",Object[q].Question);
+		printf("\n%s\n",Object[q].Question);//Left for the flip the question lifeline
 	}
 }
 
@@ -100,11 +100,11 @@ void FiftyFifty(int q){
 		if (OptionValue != *Object[q].CorrectChoice && !IncorrectOptionPrinted){
 			printf("%c. %s\n",OptionValue,Object[q].Options[j]);
 			IncorrectOptionPrinted = 1;
-		}
+		}//This loop finds the correct option
 		if (OptionValue == *Object[q].CorrectChoice)
 			printf("%c. %s\n",OptionValue,Object[q].Options[j]);  
         OptionValue++;
-	}
+	}//It prints just the next option
 }
 
 //function for the lifeline flip the question
@@ -118,7 +118,7 @@ void FlipTheQuestion(int q){
 
 //Alternative to strcasecmp function for characters.
 int ChoicesAreSame(char* a, char* b){
-	if ((*a == *b) || abs(*a - *b) == 32)
+	if ((*a == *b) || abs(*a - *b) == 32)// For comparing both the lowercase and uppercase inputs 
 		return 1;
 	return 0;
 }
@@ -132,7 +132,7 @@ int ValidLifeLineInput(){
 	return InvalidInput;
 }
 
-//To check if the choice is correct
+//To check if the choice is correct and allows to enter 'l' for lifeline and 'q' for quitting 
 int IsValidInput(char* input){
 	if (strlen(input) <= 2){
 		if (ChoicesAreSame(input,"A") || ChoicesAreSame(input,"B") || ChoicesAreSame(input,"C") || ChoicesAreSame(input,"D") || ChoicesAreSame(input,"L") || ChoicesAreSame(input,"Q"))
@@ -143,11 +143,11 @@ int IsValidInput(char* input){
 
 //Function to reassure the player
 void TakeValidInput(char* input){
-	printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
+	printf("Take you time to think! When ready enter your answer or use a Life Line! or Quit the game: ");
 	fgets(input,INPUT_BUFFER,stdin);
 	while(!IsValidInput(input)){
 		printf("\nInvalid Input!\n\n");
-		printf("Take you time to think! When ready enter your answer or use a Life Line! : ");
+		printf("Take you time to think! When ready enter your answer or use a Life Line! or Quit the game: ");
 		fgets(input,INPUT_BUFFER,stdin);
 	}
 }
@@ -251,7 +251,7 @@ void SafePoints(int q){
 		printf("\nSorry! You have won Rs 0.\n");
 }
 
-//Function disclosing more about safepoints
+//Function disclosing more about safepoints once the player has reached one
 void Greeting(int q){
     if (q != 4 && q != 9)
         return;
@@ -282,8 +282,8 @@ int main(int argc, char *argv[]){
 
 	//Reading the game content from the input filechoice
 	FILE *file;
-	file = fopen("input.txt","r");
-	int TotalQuestions = 15;
+	file = fopen("input.txt","r");//Opens the input.txt which contains all the questions, options and correct answers.
+	int TotalQuestions = 15;//For storing 16 questions
 	for(int i = 0; i < 16; i++){
 		PrepareGame(i,file);
 	}
@@ -298,7 +298,7 @@ int main(int argc, char *argv[]){
 	
 	for(int i = 0; i < TotalQuestions; i++){
 		
-		CurrentQuestion = i; //Why is this done?
+		CurrentQuestion = i;
 
 		PrintQuestion(CurrentQuestion);
 		PrintOptions(CurrentQuestion);
@@ -318,10 +318,10 @@ int main(int argc, char *argv[]){
 		
 		//one of the options are entered by the user
 		if (ChoicesAreSame(UserChoice,Object[CurrentQuestion].CorrectChoice)){
-           	MoneyEarned = MoneyCalculator(MoneyEarned);
+           	MoneyEarned = MoneyCalculator(MoneyEarned);//Calculates the prize money earned till now.
 			printf("\nCongrats! You have answered correctly!\n");
 			printf("You have won Rs %d so far\n",MoneyEarned);
-            Greeting(i); //called only on questions 5 and 10
+            Greeting(i); //called only on questions 5 and 10 for congratulating the player
 			if(i != 14){
 				printf("Press ENTER to continue\n");
 				getc(stdin);
@@ -335,9 +335,9 @@ int main(int argc, char *argv[]){
 			char reply[INPUT_BUFFER];
 			printf("\nAre you sure you want to quit? (y or n)\n");
 			if (!i)
-				printf("If you quit, you'll be going home empty handed!\n");
+				printf("If you quit, you'll be going home empty handed!\n");//If player quits on the very first question
 			else
-				printf("If you quit, you'll be going home with Rs %d\n",MoneyEarned);
+				printf("If you quit, you'll be going home with Rs %d\n",MoneyEarned);//For all other cases
 			//puts(UserChoice);
 			fgets(reply,INPUT_BUFFER,stdin);
 			while(!ChoicesAreSame("y",reply) && !ChoicesAreSame("n",reply) && strlen(reply) > 2){
