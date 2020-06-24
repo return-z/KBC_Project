@@ -112,7 +112,7 @@ int ChoicesAreSame(char* a, char* b){
 }
 
 int ValidLifeLineInput(){
-	char* input; //Take user's input as string and use the first letter to derefernce choice
+	char input[INPUT_BUFFER]; //Take user's input as string and use the first letter to derefernce choice
 	int InvalidInput = -1; //Handles bad input
 	fgets(input,INPUT_BUFFER,stdin);
 	if (strlen(input) < 3)
